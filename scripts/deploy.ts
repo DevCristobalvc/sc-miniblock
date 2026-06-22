@@ -20,8 +20,13 @@ async function main() {
   const balance = await ethers.provider.getBalance(deployer.address);
   console.log("Balance:", ethers.formatEther(balance), "CELO");
 
+  // SCORE_SIGNER: backend wallet that signs game results.
+  // Set SCORE_SIGNER in .env or pass as arg. Defaults to deployer for testnet.
+  const scoreSigner = process.env.SCORE_SIGNER ?? deployer.address;
+  console.log("Score signer:", scoreSigner);
+
   const MiniBlock = await ethers.getContractFactory("MiniBlock");
-  const miniBlock = await MiniBlock.deploy(deployer.address);
+  const miniBlock = await MiniBlock.deploy(deployer.address, scoreSigner);
   await miniBlock.waitForDeployment();
 
   const address = await miniBlock.getAddress();
